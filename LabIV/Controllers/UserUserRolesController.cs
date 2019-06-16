@@ -19,8 +19,7 @@ namespace LabIV.Controllers
         {
             this.userUserRoleService = userUserRoleService;
         }
-
-
+        
         /// <summary>
         /// Find an userUserRole by the given id.
         /// </summary>
