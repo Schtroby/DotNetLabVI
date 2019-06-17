@@ -82,9 +82,7 @@ namespace LabIV.Services
             context.SaveChanges();
             return UserRoleGetDTO.FromUserRole(Up);
         }
-        
-       
-
+               
         public IEnumerable<UserRoleGetDTO> GetAll()
         {
             return context.UserRoles.Select(userRol => UserRoleGetDTO.FromUserRole(userRol));
