@@ -32,21 +32,21 @@ namespace Tests
 
         //    using (var context = new TasksDbContext(options))
         //    {
-        //        var usersService = new UsersService(context, config);
-        //        var added = new LabIV.DTO.RegisterPostDTO
+        //        var usersService = new UsersService(context, null, null, null,  config);
+        //        var added = new RegisterPostDTO ()
 
         //        {
-                    
+
         //            FirstName = "Julia",
         //            LastName = "Bush",
         //            Username = "julia",
         //            Email = "julia@gmail.com",
-        //            Password = "1234567"                    
+        //            Password = "1234567"
         //        };
         //        var result = usersService.Register(added);
 
         //        Assert.IsNotNull(result);
-        //        Assert.AreEqual(added.Username, result.Username);
+        //       // Assert.AreEqual(added.Username, result.Username);
 
         //    }
         //}
@@ -60,7 +60,7 @@ namespace Tests
 
         //    using (var context = new TasksDbContext(options))
         //    {
-        //        var usersService = new UsersService(context, config);
+        //        var usersService = new UsersService(context, null, null, null, config);
         //        var added = new LabIV.DTO.RegisterPostDTO
 
         //        {
@@ -108,14 +108,13 @@ namespace Tests
         //        var result = usersService.Register(added);
 
         //        var users = usersService.GetAll();
-               
+
         //        Assert.IsNotEmpty(users);
         //        Assert.AreEqual(1, users.Count());
         //        //Assert.IsEmpty(users);
 
         //    }
         //}
-
 
     }
 }

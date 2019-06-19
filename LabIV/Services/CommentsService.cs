@@ -11,7 +11,9 @@ namespace LabIV.Services
 {
     public interface ICommentsService
     {
-        IEnumerable<CommentFilterDTO> GetAll(String keyword);
+       // IEnumerable<CommentFilterDTO> GetAll(String keyword);
+
+        PaginatedList<CommentFilterDTO> GetAll(string filter, int page);
 
         Comment Create(CommentPostDTO task, User addedBy);
 
@@ -52,50 +54,50 @@ namespace LabIV.Services
             return existing;
         }
 
-        public IEnumerable<CommentFilterDTO> GetAll(String keyword)
-        {
-            IQueryable<Task> result = context.Tasks.Include(c => c.Comments);
+        //public IEnumerable<CommentFilterDTO> GetAll(String keyword)
+        //{
+        //    IQueryable<Task> result = context.Tasks.Include(c => c.Comments);
 
-            List<CommentFilterDTO> resultFilteredComments = new List<CommentFilterDTO>();
-            List<CommentFilterDTO> resultAllComments = new List<CommentFilterDTO>();
+        //    List<CommentFilterDTO> resultFilteredComments = new List<CommentFilterDTO>();
+        //    List<CommentFilterDTO> resultAllComments = new List<CommentFilterDTO>();
 
-            foreach (Task task in result)
-            {
-                task.Comments.ForEach(c =>
-                {
-                    if (c.Text == null || keyword == null)
-                    {
-                        CommentFilterDTO comment = new CommentFilterDTO
-                        {
-                            Id = c.Id,
-                            Important = c.Important,
-                            Text = c.Text,
-                            TaskId = task.Id
+        //    foreach (Task task in result)
+        //    {
+        //        task.Comments.ForEach(c =>
+        //        {
+        //            if (c.Text == null || keyword == null)
+        //            {
+        //                CommentFilterDTO comment = new CommentFilterDTO
+        //                {
+        //                    Id = c.Id,
+        //                    Important = c.Important,
+        //                    Text = c.Text,
+        //                    TaskId = task.Id
 
-                        };
-                        resultAllComments.Add(comment);
-                    }
-                    else if (c.Text.Contains(keyword))
-                    {
-                        CommentFilterDTO comment = new CommentFilterDTO
-                        {
-                            Id = c.Id,
-                            Important = c.Important,
-                            Text = c.Text,
-                            TaskId = task.Id
+        //                };
+        //                resultAllComments.Add(comment);
+        //            }
+        //            else if (c.Text.Contains(keyword))
+        //            {
+        //                CommentFilterDTO comment = new CommentFilterDTO
+        //                {
+        //                    Id = c.Id,
+        //                    Important = c.Important,
+        //                    Text = c.Text,
+        //                    TaskId = task.Id
 
-                        };
-                        resultFilteredComments.Add(comment);
+        //                };
+        //                resultFilteredComments.Add(comment);
 
-                    }
-                });
-            }
-            if (keyword == null)
-            {
-                return resultAllComments;
-            }
-            return resultFilteredComments;
-        }
+        //            }
+        //        });
+        //    }
+        //    if (keyword == null)
+        //    {
+        //        return resultAllComments;
+        //    }
+        //    return resultFilteredComments;
+        //}
 
         public Comment GetById(int id)
         {
@@ -117,6 +119,26 @@ namespace LabIV.Services
             context.Comments.Update(comment);
             context.SaveChanges();
             return comment;
+        }
+
+        public PaginatedList<CommentFilterDTO> GetAll(string filter, int page)
+        {
+            IQueryable<Comment> result = context
+                .Comments
+                .Where(c => string.IsNullOrEmpty(filter) || c.Text.Contains(filter))
+                .OrderBy(c => c.Id)
+                .Include(c => c.Task);
+
+            PaginatedList<CommentFilterDTO> paginatedResult = new PaginatedList<CommentFilterDTO>();
+            paginatedResult.CurrentPage = page;
+
+            paginatedResult.NumberOfPages = (result.Count() - 1) / PaginatedList<CommentFilterDTO>.EntriesPerPage + 1;
+            result = result
+                .Skip((page - 1) * PaginatedList<CommentFilterDTO>.EntriesPerPage)
+                .Take(PaginatedList<CommentFilterDTO>.EntriesPerPage);
+            paginatedResult.Entries = result.Select(f => CommentFilterDTO.FromComment(f)).ToList();
+
+            return paginatedResult;
         }
     }
 }

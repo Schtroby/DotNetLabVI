@@ -32,9 +32,9 @@ namespace LabIV.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpGet]
         //[Authorize(Roles = "Admin,Regular")]
-        public IEnumerable<CommentFilterDTO> GetAll([FromQuery]String filter)
+        public PaginatedList<CommentFilterDTO> GetAll([FromQuery]String filter, [FromQuery]int page = 1)
         {
-            return commentsService.GetAll(filter);
+            return commentsService.GetAll(filter, page);
         }
 
         [HttpGet("{id}")]
