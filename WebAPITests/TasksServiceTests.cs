@@ -7,6 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+
+
 namespace WebAPITests
 {
     class TasksServiceTests
@@ -106,7 +108,7 @@ namespace WebAPITests
             using (var context = new TasksDbContext(options))
             {
                 var taskService = new TasksService(context);
-                var added = new TaskPostDTO()
+                var added = taskService.Create(new TaskPostDTO
 
                 {
                     Title = "Booking1010",
@@ -127,21 +129,24 @@ namespace WebAPITests
                         }
                     },
 
-                };
+                },null );
 
-                var toAdd = taskService.Create(added, null);
-                var update = new TaskPostDTO()
-                {
-                    Title = "Updated"
-                };
-
-                var toUp = taskService.Create(update, null);
-                var updateResult = taskService.Upsert(toUp.Id, toUp);
-
-
-                Assert.IsNotNull(updateResult);
-                Assert.AreEqual(toUp.Title, updateResult.Title);
                 
+                context.Entry(added).State = EntityState.Detached;
+
+                var update = new Task()
+                {
+                    Title = "Updated",
+                   
+                };
+
+                
+                var updateResult = taskService.Upsert(added.Id, update);
+
+
+                Assert.NotNull(updateResult);
+                Assert.AreNotEqual(added.Title, updateResult.Title);
+                Assert.AreEqual("Updated", updateResult.Title);
             }
         }
 

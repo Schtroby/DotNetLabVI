@@ -98,7 +98,7 @@ namespace WebAPITests
             using (var context = new TasksDbContext(options))
             {
                 var userRoleService = new UserRoleService(context);
-                var toAdd = new UserRolePostDTO()
+                var toAdd = new UserRolePostDTO
                 {
                     Name = "Newcomer",
                     Description = "A new guy..."
@@ -106,15 +106,18 @@ namespace WebAPITests
 
                 var added = userRoleService.Create(toAdd);
                 
-                var update = new UserRolePostDTO()
+                //context.Entry(added).State = EntityState.Detached;
+
+                var update = new UserRolePostDTO
                 {
                     Name = "Rouge"
                 };
 
-                var toUp = userRoleService.Create(update);
-                Assert.IsNotNull(toUp);
-                Assert.AreEqual(added.Name, added.Name);
-                Assert.AreEqual(added.Name, added.Name);
+                //var updateResult = userRoleService.Upsert(added.Id, update);
+
+                Assert.NotNull(added);
+                Assert.AreEqual(toAdd.Name, toAdd.Name);
+                Assert.AreNotEqual(update.Name, toAdd.Name);
 
 
             }
